@@ -1,0 +1,43 @@
+%control of a spring mass damper system
+% at time tends to infinity we want our error be 0. 
+
+mass= 10;
+k=15;
+y=5;
+
+A=[0 1; -k/mass -y/mass];
+B=[0;1/mass];
+
+(rank(ctrb(A,B))) %should be equal to Dimension of A so as to be controllable
+
+k1=input('enter 1st eiganvalue');
+k2=input('enter 2nd eiganvalue');
+
+poles=[k1,k2]; % poles are same as eigan values
+K=place(A,B,poles);
+
+M=A-B*K;
+ 
+x=[5;0]; % initializing error state. x[1] denotes error in position and x[2] denotes error in velocity
+
+t=0;
+tf=10;
+dt=0.01;
+X=[];
+T=[];
+n=0;
+
+while(t<tf)
+    %solved using discrete time soltion method of state space eq.
+    
+     X=[X,x];
+     T=[T;t];
+    x=expm(M*dt*(n+1))*x;
+    t=t+dt;
+    n=n+1;
+    
+end
+
+hold on;
+plot(T,X(1,:));
+plot(T,X(2,:));
